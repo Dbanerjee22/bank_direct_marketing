@@ -1,0 +1,55 @@
+import numpy as np
+import pandas as pd
+from time import strptime
+import seaborn as sns
+from sklearn.linear_model import LogisticRegression
+from sklearn.model_selection import train_test_split
+from sklearn.pipeline import make_pipeline
+from sklearn.preprocessing import StandardScaler
+bank=pd.read_csv("D:\\capstone\\bank-full.csv",sep=";")
+bank.head()
+#cleaning the data
+y=pd.get_dummies(bank["y"],drop_first=True)
+bank.drop("y",axis=1,inplace=True)
+#strptime('Feb','%b').tm_mon
+bank['month'] = bank['month'].apply(lambda x:strptime(x, "%b").tm_mon)
+hou=pd.get_dummies(bank["housing"],drop_first=True)
+bank.drop("housing",axis=1,inplace=True)
+bank["housing"]=hou
+sns.countplot(bank['contact'])
+#converting string data into integer value
+con=pd.get_dummies(bank["contact"],drop_first=False)
+bank.drop("contact",axis=1,inplace=True)
+bank=pd.concat([bank,con],axis=1)
+bank.drop("unknown",axis=1,inplace=True)
+#---------------------
+hou=pd.get_dummies(bank["job"])
+bank.drop("job",axis=1,inplace=True)
+bank=pd.concat([bank,hou],axis=1)
+bank.drop("unknown",axis=1,inplace=True)
+#----------------------
+hou=pd.get_dummies(bank["education"])
+bank.drop("education",axis=1,inplace=True)
+bank=pd.concat([bank,hou],axis=1)
+bank.drop("unknown",axis=1,inplace=True)
+#----------------------
+mar=pd.get_dummies(bank["marital"])
+bank.drop("marital",axis=1,inplace=True)
+bank=pd.concat([bank,mar],axis=1)
+#-----------------------
+con=pd.get_dummies(bank["loan"],drop_first=True)
+bank.drop("loan",axis=1,inplace=True)
+bank["loan"]=con
+#------------------------
+con=pd.get_dummies(bank["default"],drop_first=True)
+bank.drop("default",axis=1,inplace=True)
+bank["default"]=con
+#------------------------
+bank.drop('poutcome',axis=1,inplace=True)
+#---------------------
+x_train, x_test, y_train, y_test = train_test_split(bank.drop("yes",axis=1),bank["yes"], test_size=0.3, random_state=0)
+pipe = make_pipeline(StandardScaler(), LogisticRegression())
+pipe.fit(x_train, y_train)
+pipe.score(X_test, y_test)
+
+#score--0.8886021822471247
