@@ -50,6 +50,6 @@ bank.drop('poutcome',axis=1,inplace=True)
 x_train, x_test, y_train, y_test = train_test_split(bank.drop("yes",axis=1),bank["yes"], test_size=0.3, random_state=0)
 pipe = make_pipeline(StandardScaler(), LogisticRegression())
 pipe.fit(x_train, y_train)
-pipe.score(X_test, y_test)
+pipe.score(x_test, y_test)
 
 #score--0.8886021822471247
